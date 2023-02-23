@@ -1,0 +1,7 @@
+{{define "list"}}
+<ol>
+  {{range $key, $value := .}}
+  <li>{{$key}} - {{$value}}</li>
+  {{end}}
+</ol>
+{{end}}

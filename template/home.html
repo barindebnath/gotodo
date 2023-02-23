@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Go Todo</title>
+  <meta name="description" content="Todo list using golang" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  {{template "header"}}
+  <hr />
+  {{template "users" .Users}}
+  <hr />
+  {{template "list" .List}}
+</body>
+
+</html>
