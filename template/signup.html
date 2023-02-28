@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Sign UP</title>
+    <meta name="description" content="Create account" />
+    <style>
+        .form-wrapper {
+            max-width: 300px;
+            margin: auto;
+        }
+
+        label,
+        input,
+        button {
+            width: 100%;
+        }
+
+        input {
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body style="margin: 0px;">
+
+    <div class="form-wrapper">
+        <label for="fname">First name</label>
+        <input type="string" name="fname" id="fname" />
+
+        <label for="lname">Last name</label>
+        <input type="string" name="lname" id="lname" />
+
+        <label for="email">Email</label>
+        <input type="string" name="email" id="email" />
+
+        <label for="password">Password</label>
+        <input type="string" name="password" id="password" />
+
+        <button onclick="createAccount()">Create Account</button>
+    </div>
+
+    <script>
+        function createAccount() {
+            const fname = document.getElementById("fname");
+            const lname = document.getElementById("lname");
+            const email = document.getElementById("email");
+            const password = document.getElementById("password");
+
+            const url = "/api/signup";
+
+            const formData = new FormData()
+            formData.append('first_name', fname.value.trim())
+            formData.append('last_name', lname.value.trim())
+            formData.append('email', email.value.trim())
+            formData.append('password', password.value.trim())
+
+            fetch(url, {
+                method: "POST",
+                body: formData,
+            }).then(response => {
+                console.log('response 1 >> ', response);
+                return response.json()
+            }).then(json => {
+                console.log('response 2 >> ', json);
+            });
+        }
+    </script>
+
+</body>
+
+</html>

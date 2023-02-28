@@ -5,15 +5,31 @@
   <meta charset="utf-8" />
   <title>Go Todo</title>
   <meta name="description" content="Todo list using golang" />
-  <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
+<body onload="onLoad()" style="margin: 0px;">
   {{template "header"}}
   <hr />
-  {{template "users" .Users}}
+  {{template "taskInput"}}
   <hr />
   {{template "list" .List}}
+
+  <div id="xhrList"></div>
+
+  <script>
+    const onLoad = () => {
+      const getTasks = new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/api/tasks");
+        xhr.onload = () => resolve(xhr.response);
+        xhr.send();
+      });
+
+      getTasks.then((res) => {
+        console.log('res >> ', res)
+      })
+    }
+  </script>
 </body>
 
 </html>

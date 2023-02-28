@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Employees</title>
+  <meta name="description" content="Employee List" />
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-gap: 32px;
+      padding: 32px;
+    }
+
+    .grid-item {
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px;
+      padding: 16px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+
+<body style="margin: 0px;">
+
+  <div class="grid-container">
+    {{range $index, $user := .}}
+    <div class="grid-item">
+      <p>Name: {{ $user.FirstName}} {{$user.LastName }}</p>
+      <p>Email: {{ $user.Email }}</p>
+      <p>SignUp Date: {{monthYYYY $user.CreatedAt}}</p>
+    </div>
+    {{ end }}
+  </div>
+
+</body>
+
+</html>

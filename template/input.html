@@ -1,0 +1,44 @@
+{{define "taskInput"}}
+<div>
+  <input id="task_input" type="text" />
+  <button onClick="addTask()">➕Add</button>
+  <script>
+    const addTask = () => {
+      const taskInput = window.document.getElementById("task_input");
+      const value = taskInput.value.trim()
+      if (value) {
+        const url = "/api/task";
+
+        // let formBody = [
+        //     encodeURIComponent('description') + '=' + encodeURIComponent(value)
+        // ];
+        // formBody = formBody.join("&");
+
+        const formData = new FormData()
+        formData.append('description', value)
+
+        fetch(url, {
+          method: "POST",
+          body: formData,
+        }).then(response => {
+          console.log('response 1 >> ', response);
+          return response.json()
+        }).then(json => {
+          console.log('response 2 >> ', json);
+          taskInput.value = '';
+
+          var listItem = document.createElement("li");
+          listItem.innerHTML = `
+            <input type="checkbox" name="${json.id}" value="${json.checked}">
+            <label for="${json.id}">${json.detail}</label><br>
+            <button>❌ Delete</button>
+          `;
+
+          const taskListElement = window.document.getElementById('task_list');
+          taskListElement.appendChild(listItem)
+        });
+      }
+    }
+  </script>
+</div>
+{{end}}

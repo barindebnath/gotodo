@@ -1,9 +1,0 @@
-{{define "users"}}
-{{range $index, $user := .}}
-<div>
-  <p>Name: {{ $user.Name }}</p>
-  <p>Username: {{ $user.Username }}</p>
-  <p>SignUp Date: {{monthYYYY $user.SignupDate}}</p>
-</div>
-{{ end }}
-{{end}}
