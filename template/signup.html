@@ -6,19 +6,42 @@
     <title>Sign UP</title>
     <meta name="description" content="Create account" />
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: monospace;
+        }
+
         .form-wrapper {
             max-width: 300px;
             margin: auto;
         }
 
-        label,
-        input,
-        button {
+        .inputWrapper {
+            margin-top: 16px;
+        }
+
+        label {
             width: 100%;
+            font-size: 16px;
         }
 
         input {
-            margin-bottom: 16px;
+            width: 100%;
+            height: 38px;
+            font-family: system-ui;
+            font-size: 20px;
+            margin: 4px 0 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .error {
+            margin: 4px 0 0;
+            color: orangered;
         }
     </style>
 </head>
@@ -26,19 +49,27 @@
 <body style="margin: 0px;">
 
     <div class="form-wrapper">
-        <label for="fname">First name</label>
-        <input type="string" name="fname" id="fname" />
+        <div class="inputWrapper">
+            <label for="fname">First name</label>
+            <input type="string" name="fname" id="fname" />
+        </div>
 
-        <label for="lname">Last name</label>
-        <input type="string" name="lname" id="lname" />
+        <div class="inputWrapper">
+            <label for="lname">Last name</label>
+            <input type="string" name="lname" id="lname" />
+        </div>
 
-        <label for="email">Email</label>
-        <input type="string" name="email" id="email" />
+        <div class="inputWrapper">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" />
+        </div>
 
-        <label for="password">Password</label>
-        <input type="string" name="password" id="password" />
+        <div class="inputWrapper">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" />
+        </div>
 
-        <button onclick="createAccount()">Create Account</button>
+        <button type="button" onclick="createAccount()">Create Account</button>
     </div>
 
     <script>
@@ -64,6 +95,43 @@
                 return response.json()
             }).then(json => {
                 console.log('response 2 >> ', json);
+                let isValid = true;
+                if (json.first_name) {
+                    const errorMsg = document.createElement("p");
+                    errorMsg.innerText = json.first_name;
+                    errorMsg.classList.add('error')
+                    fname.parentNode.insertBefore(errorMsg, fname.nextSibling)
+                    isValid = false
+                }
+
+                if (json.last_name) {
+                    const errorMsg = document.createElement("p");
+                    errorMsg.innerText = json.last_name;
+                    errorMsg.classList.add('error')
+                    lname.parentNode.insertBefore(errorMsg, lname.nextSibling)
+                    isValid = false
+                }
+
+                if (json.email) {
+                    const errorMsg = document.createElement("p");
+                    errorMsg.innerText = json.email;
+                    errorMsg.classList.add('error')
+                    email.parentNode.insertBefore(errorMsg, email.nextSibling)
+                    isValid = false
+                }
+
+                if (json.password) {
+                    const errorMsg = document.createElement("p");
+                    errorMsg.innerText = json.password;
+                    errorMsg.classList.add('error')
+                    password.parentNode.insertBefore(errorMsg, password.nextSibling)
+                    isValid = false
+                }
+
+                if (isValid) {
+                    // success
+                    console.log("success")
+                }
             });
         }
     </script>
