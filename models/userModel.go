@@ -15,4 +15,5 @@ type User struct {
 	Email     string             `json:"email" validate:"email,required" bson:"email"`
 	CreatedAt time.Time          `json:"created_at"`
 	UpdatedAt time.Time          `json:"updated_at"`
+	Tasks     []Task             `json:"tasks" bson:"tasks"`
 }

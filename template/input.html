@@ -1,42 +1,99 @@
 {{define "taskInput"}}
+<style>
+  #task_input {
+    width: calc(100% - 100px);
+    padding: 8px 16px;
+    border: 1px solid #0a0824;
+    border-radius: 4px;
+    height: 43px;
+    padding: 8px 16px;
+    vertical-align: middle;
+  }
+
+  button.add {
+    background-color: #0a0824;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 20px;
+    vertical-align: middle;
+  }
+
+  button.add:hover {
+    background-color: #1e1964;
+  }
+</style>
 <div>
-  <input id="task_input" type="text" />
-  <button onClick="addTask()">➕Add</button>
+  <input id="task_input" type="text" onkeypress="handleKeyPress(event)" />
+  <button class="add" onClick="addTask()">➕Add</button>
   <script>
     const addTask = () => {
       const taskInput = window.document.getElementById("task_input");
       const value = taskInput.value.trim()
       if (value) {
-        const url = "/api/task";
+        if (window.isSessionUser) {
+          postTask(value)
+        } else {
+          const newTask = {
+            task_id: Math.floor(Math.random() * 100000000000000000),
+            label: value,
+            is_done: false,
+            created_at: new Date().toISOString()
+          }
+          addTaskInList(newTask);
+        }
+      }
+    }
 
-        // let formBody = [
-        //     encodeURIComponent('description') + '=' + encodeURIComponent(value)
-        // ];
-        // formBody = formBody.join("&");
+    const ddMonthYYYY = (date) => {
+      const d = new Date(date);
+      const month = d.toLocaleString('default', { month: 'long' });
+      return `${String(d.getDate()).padStart(2, '0')} ${month} ${d.getFullYear()}`;
+    }
 
-        const formData = new FormData()
-        formData.append('description', value)
+    const fullTime = (date) => {
+      const d = new Date(date);
+      return `${d.toLocaleString('default', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+    }
 
-        fetch(url, {
-          method: "POST",
-          body: formData,
-        }).then(response => {
-          console.log('response 1 >> ', response);
-          return response.json()
-        }).then(json => {
-          console.log('response 2 >> ', json);
-          taskInput.value = '';
+    const addTaskInList = (task) => {
+      var listItem = document.createElement("li");
+      listItem.innerHTML = `
+        <input type="checkbox" id="${task.task_id}" value="${task.is_done}" onchange="updateCompletion('${task.task_id}')">
+        <label for="${task.task_id}">
+          <div>${task.label}</div>
+          <div class="created-at" title="${fullTime(task.created_at)}">${ddMonthYYYY(task.created_at)}</div>
+        </label>
+        <button onClick="deleteTask('${task.task_id}')">❌ Delete</button>
+      `;
+      listItem.classList.add('list-item');
 
-          var listItem = document.createElement("li");
-          listItem.innerHTML = `
-            <input type="checkbox" name="${json.id}" value="${json.checked}">
-            <label for="${json.id}">${json.detail}</label><br>
-            <button>❌ Delete</button>
-          `;
+      const taskListElement = window.document.getElementById('task_list');
+      taskListElement.appendChild(listItem)
+    }
 
-          const taskListElement = window.document.getElementById('task_list');
-          taskListElement.appendChild(listItem)
-        });
+    const postTask = (value) => {
+      const formData = new FormData()
+      formData.append('description', value)
+
+      fetch("/api/task", {
+        method: "POST",
+        body: formData,
+      }).then(response => {
+        return response.json()
+      }).then(json => {
+        const taskInput = window.document.getElementById("task_input");
+        taskInput.value = '';
+        addTaskInList(json);
+      });
+    }
+    
+    function handleKeyPress(e) {
+      if (e.keyCode === 13) {
+        event.preventDefault();
+        addTask();
       }
     }
   </script>

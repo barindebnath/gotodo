@@ -17,21 +17,48 @@
       box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 12px;
       padding: 16px;
       border-radius: 6px;
+      background-color: aquamarine;
+    }
+
+    .grid-item.current-user {
+      background-color: #0a0824;
+    }
+    .grid-item.current-user p{
+      color: white;
+    }
+
+    .grid-item p{
+      margin: 0;
+      font-size: 16px;
+    }
+    .grid-item p:not(:last-child) {
+      margin: 0 0 8px;
+    }
+
+    .warning {
+      text-align: center;
+      font-size: 24px;
+      color: red;
     }
   </style>
 </head>
 
 <body style="margin: 0px;">
+  {{template "header" .CurrentUserEmail}}
 
+  {{if .CurrentUserEmail}}
   <div class="grid-container">
-    {{range $index, $user := .}}
-    <div class="grid-item">
+    {{range $index, $user := .Users}}
+    <div class="grid-item  {{if eq $user.Email $.CurrentUserEmail}}current-user{{end}}">
       <p>Name: {{ $user.FirstName}} {{$user.LastName }}</p>
       <p>Email: {{ $user.Email }}</p>
       <p>SignUp Date: {{monthYYYY $user.CreatedAt}}</p>
     </div>
     {{ end }}
   </div>
+  {{else}}
+  <p class="warning">Login to view the list of employees</p>
+  {{end}}
 
 </body>
 

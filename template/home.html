@@ -5,19 +5,35 @@
   <meta charset="utf-8" />
   <title>Go Todo</title>
   <meta name="description" content="Todo list using golang" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <style>
+    .inputListWrapper {
+      max-width: 500px;
+      margin: 16px auto 0;
+      padding: 24px;
+      background-color: aquamarine;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 
-<body onload="onLoad()" style="margin: 0px;">
-  {{template "header"}}
-  <hr />
-  {{template "taskInput"}}
-  <hr />
-  {{template "list" .List}}
+<body style="margin: 0px;">
+  {{template "header" .User.ID}}
+
+  <div class="inputListWrapper">
+    {{template "taskInput"}}
+
+    {{template "list" .User.Tasks}}
+  </div>
 
   <div id="xhrList"></div>
 
+
   <script>
-    const onLoad = () => {
+      {/* const onLoad = () => {
       const getTasks = new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "/api/tasks");
@@ -28,7 +44,7 @@
       getTasks.then((res) => {
         console.log('res >> ', res)
       })
-    }
+    } */}
   </script>
 </body>
 

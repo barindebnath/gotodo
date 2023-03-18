@@ -12,29 +12,73 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type HomePageData struct {
+	User models.User
+}
+
 func HomePage(w http.ResponseWriter, r *http.Request) {
-	err := template.Templates.ExecuteTemplate(w, "home.html", nil)
-	if err != nil {
-		log.Fatalln(err)
+	user, errorString := getUserFromCookie(r)
+
+	if errorString != "" {
+		err := template.Templates.ExecuteTemplate(w, "home.html", nil)
+		if err != nil {
+			log.Println(err)
+		}
+	} else {
+		var data = HomePageData{
+			user,
+		}
+		err := template.Templates.ExecuteTemplate(w, "home.html", data)
+		if err != nil {
+			log.Println(err)
+		}
 	}
+
 }
 
 func SignupPage(w http.ResponseWriter, r *http.Request) {
 	err := template.Templates.ExecuteTemplate(w, "signup.html", nil)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 }
 
-func EmplyeesPage(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Content-Type", "application/x-www-form-urlencode")
-	users := getUsers()
-
-	err := template.Templates.ExecuteTemplate(w, "users.html", users)
+func LoginPage(w http.ResponseWriter, r *http.Request) {
+	err := template.Templates.ExecuteTemplate(w, "login.html", nil)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
-	// json.NewEncoder(w).Encode(users)
+}
+
+func LogoutPage(w http.ResponseWriter, r *http.Request) {
+	removeUserSession(w, r) // can implement go routine here
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+type EmployeesPageData struct {
+	Users            []models.User
+	CurrentUserEmail string
+}
+
+func EmployeesPage(w http.ResponseWriter, r *http.Request) {
+	user, errorString := getUserFromCookie(r)
+
+	if errorString != "" {
+		err := template.Templates.ExecuteTemplate(w, "users.html", nil)
+		if err != nil {
+			log.Println(err)
+		}
+	} else {
+		var data = EmployeesPageData{
+			getUsers(),
+			user.Email,
+		}
+
+		err := template.Templates.ExecuteTemplate(w, "users.html", data)
+		if err != nil {
+			log.Println(err)
+		}
+	}
 }
 
 // get all users from db
@@ -57,4 +101,8 @@ func getUsers() []models.User {
 
 	defer cursor.Close(context.Background())
 	return users
+}
+
+func FaviconHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./static/images/favicon-16x16.ico")
 }

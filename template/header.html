@@ -1,3 +1,60 @@
 {{define "header"}}
-<header>my header</header>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: monospace;
+  }
+
+  nav {
+    background-color: #0a0824;
+  }
+
+  .logo {
+    font-size: 30px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 10px 0;
+    margin: 0 20px;
+    display: inline-block;
+    line-height: 40px;
+    text-decoration: none;
+    vertical-align: middle;
+  }
+
+  .links {
+    margin-right: 20px;
+    display: inline-flex;
+    width: calc(100% - 141px);
+    justify-content: flex-end;
+    vertical-align: middle;
+  }
+
+  .links a {
+    margin-left: 16px;
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+  }
+</style>
+<header onload="onLoad()">
+  <nav>
+    <a class="logo" href="/">#&@$</a>
+
+    <span class="links">
+      {{if .}}
+      <a href="/employees">Employees</a>
+      <a href="/logout">Logout</a>
+      {{else}}
+      <a href="/login">Login</a>
+      <a href="/signup">Signup</a>
+      {{end}}
+    </span>
+  </nav>
+</header>
+<script>
+  window.isSessionUser = {{if .}} true {{else}} false {{end}};
+</script>
 {{end}}

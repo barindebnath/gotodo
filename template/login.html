@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Sign UP</title>
-    <meta name="description" content="Create account" />
+    <title>Sign In</title>
+    <meta name="description" content="Login" />
     <style>
         .form-wrapper {
             max-width: 300px;
@@ -54,18 +54,6 @@
 
     <div class="form-wrapper">
         <div class="inputWrapper">
-            <label for="fname">First name</label>
-            <input type="string" name="fname" id="fname" onkeypress="handleKeyPress(event)" />
-            <p id="fname_error" class="error hide"></p>
-        </div>
-
-        <div class="inputWrapper">
-            <label for="lname">Last name</label>
-            <input type="string" name="lname" id="lname" onkeypress="handleKeyPress(event)" />
-            <p id="lname_error" class="error hide"></p>
-        </div>
-
-        <div class="inputWrapper">
             <label for="email">Email</label>
             <input type="email" name="email" id="email" onkeypress="handleKeyPress(event)" />
             <p id="email_error" class="error hide"></p>
@@ -77,26 +65,23 @@
             <p id="password_error" class="error hide"></p>
         </div>
 
-        <button type="button" onclick="createAccount()">Create Account</button>
+        <button id="login_button" type="button" onclick="login()">Sign In</button>
+        <p id="error_message" class="error hide"></p>
     </div>
 
     <script>
-        function createAccount() {
-            const fname = document.getElementById("fname");
-            const lname = document.getElementById("lname");
+        function login() {
             const email = document.getElementById("email");
             const password = document.getElementById("password");
+            const loginButton = document.getElementById("login_button");
 
-            const fnameError = document.getElementById("fname_error");
-            const lnameError = document.getElementById("lname_error");
             const emailError = document.getElementById("email_error");
             const passwordError = document.getElementById("password_error");
+            const otherError = document.getElementById("error_message");
 
-            const url = "/api/signup";
+            const url = "/api/login";
 
             const formData = new FormData()
-            formData.append('first_name', fname.value.trim())
-            formData.append('last_name', lname.value.trim())
             formData.append('email', email.value.trim())
             formData.append('password', password.value.trim())
 
@@ -109,24 +94,6 @@
             }).then(json => {
                 console.log('response 2 >> ', json);
                 let isValid = true;
-                if (json.first_name) {
-                    fnameError.innerText = json.first_name;
-                    fnameError.classList.remove('hide')
-                    isValid = false
-                } else {
-                    !fnameError.classList.contains('hide') &&
-                        fnameError.classList.add('hide')
-                }
-
-                if (json.last_name) {
-                    lnameError.innerText = json.last_name;
-                    lnameError.classList.remove('hide')
-                    isValid = false
-                } else {
-                    !lnameError.classList.contains('hide') &&
-                        lnameError.classList.add('hide')
-                }
-
                 if (json.email) {
                     emailError.innerText = json.email;
                     emailError.classList.remove('hide')
@@ -145,13 +112,22 @@
                         passwordError.classList.add('hide')
                 }
 
+                if (json.message) {
+                    otherError.innerText = json.message;
+                    otherError.classList.remove('hide')
+                    isValid = false
+                } else {
+                    !otherError.classList.contains('hide') &&
+                        otherError.classList.add('hide')
+                }
+
                 if (isValid) {
                     // success
                     window.location.replace("/");
                 }
             });
         }
-        
+
         function handleKeyPress(e) {
             if (e.keyCode === 13) {
                 event.preventDefault();

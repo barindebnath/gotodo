@@ -1,7 +1,132 @@
 {{define "list"}}
+<style>
+  #task_list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #task_list .list-item {
+    padding: 16px;
+    border: 1px solid #0a0824;
+    border-radius: 4px;
+    margin: 8px 0;
+  }
+
+  #task_list .list-item.checked {
+    background-color: #0a0824;
+    color: white;
+  }
+
+  #task_list .list-item input {
+    margin-right: 16px;
+    vertical-align: middle;
+  }
+
+  #task_list .list-item label {
+    font-size: 20px;
+    vertical-align: middle;
+    width: calc(100% - 185px);
+    display: inline-block;
+  }
+
+  #task_list .list-item button {
+    background-color: #0a0824;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 20px;
+    vertical-align: middle;
+  }
+
+  #task_list .list-item button:hover {
+    background-color: #1e1964;
+  }
+
+  #task_list .list-item .created-at {
+    font-size: 12px;
+    color: #999;
+  }
+</style>
 <ol id='task_list'>
   {{range $key, $value := .}}
-  <li>{{$key}} - {{$value}}</li>
+  <li class="list-item {{if $value.IsDone}}checked{{end}}">
+    <input 
+      type="checkbox" 
+      id="{{$value.ID}}" 
+      value="{{$value.IsDone}}" 
+      onchange="updateCompletion({{$value.ID}})" 
+      {{if $value.IsDone}}checked{{end}}
+    >
+    <label for="{{$value.ID}}">
+      <div>{{$value.Label}}</div>
+      <div class="created-at" title="{{fullTime $value.CreatedAt}}">{{ddMonthYYYY $value.CreatedAt}}</div>
+    </label>
+    <button onClick="deleteTask({{$value.ID}})">❌ Delete</button>
+  </li>
   {{end}}
 </ol>
+
+<script>
+  const removeTaskFromList = (id) => {
+    const input = document.getElementById(id);
+    const li = input.closest('li');
+    li.remove();
+  };
+
+  const updateTaskFromList = (id, isDone) => {
+    const listItem = document.getElementById(id).closest('li');
+    if (isDone) {
+      listItem.classList.add('checked');
+    } else {
+      listItem.classList.remove('checked');
+    }
+  };
+
+  const updateTaskDone = (id, isDone) => {
+    const formData = new FormData();
+    formData.append('is_done', isDone ? '1' : '0');
+
+    fetch(`/api/task/${id}`, {
+      method: 'PUT',
+      body: formData,
+    }).then((response) => {
+      if (response.status === 200) {
+        updateTaskFromList(id, isDone);
+      }
+    });
+  }
+
+  const deleteTaskFromDB = (id) => {
+    fetch(`/api/task/${id}`, {
+      method: 'DELETE',
+    }).then((response) => {
+      if (response.status === 200) {
+        return response.json()
+      }
+    }).then(() => {
+      removeTaskFromList(id);
+    });
+  };
+
+  const updateCompletion = (id) => {
+    const isDone = document.getElementById(id).checked;
+
+    if (window.isSessionUser) {
+      updateTaskDone(id, isDone);
+    } else {
+      updateTaskFromList(id, isDone);
+    }
+  };
+
+  const deleteTask = (id) => {
+    if (window.isSessionUser) {
+      deleteTaskFromDB(id);
+    } else {
+      removeTaskFromList(id);
+    }
+  };
+</script>
 {{end}}
